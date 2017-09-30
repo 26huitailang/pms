@@ -1,0 +1,4 @@
+
+        [console_scripts]
+        pms=cli.cli:cli
+    
