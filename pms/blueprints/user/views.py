@@ -38,7 +38,7 @@ def login():
     return render_template('user/login.html', form=form)
 
 
-@user.route('/logut')
+@user.route('/logout')
 @login_required
 def logout():
     logout_user()
