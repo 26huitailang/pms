@@ -12,7 +12,7 @@ user = Blueprint('user', __name__, template_folder='templates')
 
 @user.route('/')
 def index():
-    return render_template('user/welcome.html')
+    return redirect(url_for('admin.index'))
 
 
 @user.route('/login', methods=['GET', 'POST'])
