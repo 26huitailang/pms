@@ -15,9 +15,11 @@ flake8==3.4.1
 psycopg2==2.6.1
 Flask-SQLAlchemy==2.1
 sqlalchemy-utils==0.32.16
+celery==4.1.0
 
 # Forms.
 Flask-WTF==0.14.2
+WTForms-Components==0.9.7
 
 # Extensions.
 Flask-Login==0.3.2

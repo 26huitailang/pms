@@ -1,6 +1,7 @@
 # coding: utf-8
 from collections import OrderedDict
 from hashlib import md5
+from sqlalchemy import or_
 
 from pms.extensions import db
 
@@ -77,6 +78,51 @@ class User(UserMixin, ResourceMixin, db.Model):
             return generate_password_hash(plaintext_password)
 
         return None
+
+    @classmethod
+    def bulk_delete(cls, ids):
+        """
+        覆盖原有的bulk_delete，后续可以改进其他附带的删除。
+
+        :param ids: 要删除的ids列表
+        :type ids: list
+        :return: int
+        """
+        delete_count = 0
+
+        for id in ids:
+            user = User.query.get(id)
+
+            if user is None:
+                continue
+
+            # TODO, 判定用户项目，去除项目关联
+            else:
+                user.delete()
+
+            delete_count += 1
+
+        return delete_count
+
+    @classmethod
+    def search(cls, query):
+        """
+        通过1个或多个字段查找资源。
+
+        :param query: 查询信息
+        :type query: str
+        :return: SQLAlchemy filter
+        """
+        if not query:
+            return ''
+
+        search_query = '%{0}%'.format(query)  # % 匹配多个字符 _匹配一个
+        # 构建多个表达式合并为tuple
+        search_chain = (User.username.ilike(search_query),
+                        User.phone.ilike(search_query),
+                        User.email.ilike(search_query))
+        # 构建OR关系的连接表达式
+        return or_(*search_chain)
 
     def authenticated(self, with_password=True, password=''):
         """

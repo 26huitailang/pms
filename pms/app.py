@@ -1,9 +1,35 @@
 # coding: utf-8
 from flask import Flask
 from itsdangerous import URLSafeTimedSerializer
+from celery import Celery
 
 from pms.extensions import db, login_manager
 from pms.blueprints.user.models import User
+
+
+def create_celery_app(app=None):
+    """
+    创建一个新的Celery对象并绑定到应用的设置。通过继承任务以及为Flask应用上下文增加支持。
+    flask推荐配置。
+
+    :param app: Flask app
+    :return: Celery app
+    """
+    app = app or create_app()
+
+    celery = Celery(app.import_name, broker=app.config['CELERY_BROKER_URL'])
+    celery.conf.update(app.config)
+    TaskBase = celery.Task
+
+    class ContextTask(TaskBase):
+        abstract = True
+
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return TaskBase.__call__(self, *args, **kwargs)
+
+    celery.Task = ContextTask
+    return celery
 
 
 def create_app():
