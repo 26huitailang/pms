@@ -1,0 +1,50 @@
+{% import 'macros/form.html' as f with context %}
+
+{% if request.endpoint.endswith('new') %}
+  {% set endpoint = 'admin.users_new' %}
+  {% set form_kwargs = {} %}
+  {% set legend = '新增用户' %}
+  {% set button = '添加' %}
+{% else %}
+  {% set endpoint = 'admin.users_edit' %}
+  {% set form_kwargs = {'id': user.id} %}
+  {% set legend = '更新用户' %}
+  {% set button = '保存' %}
+{% endif %}
+
+<div class="row">
+  <div class="col col-md-5 col-md-offset-1 well">
+    {% call f.form_tag(endpoint, **form_kwargs) %}
+      <legend>{{ legend }}</legend>
+
+      {% call f.form_group(form.username, css_class='sm-margin-bottom') %}
+      {% endcall %}
+
+      {% call f.form_group(form.email, css_class='sm-margin-bottom',
+              autofocus='autofous') %}
+      {% endcall %}
+
+      {% call f.form_group(form.phone, css_class='sm-margin-bottom') %}
+      {% endcall %}
+
+      {% call f.form_group(form.role, css_class='sm-margin-bottom') %}
+      {% endcall %}
+
+      <hr/>
+      <div class="row">
+        <div class="col-md-6">
+          <button type="submit" class="btn btn-primary btn-block">
+            {{ button }}
+          </button>
+        </div>
+        <div class="col-md-6">
+          <div class="visible-xs visible-sm sm-margin-top"></div>
+          <a href="{{ url_for('admin.users') }}"
+             class="btn btn-default btn-block">
+            Cancel
+          </a>
+        </div>
+      </div>
+    {% endcall %}
+  </div>
+</div>
